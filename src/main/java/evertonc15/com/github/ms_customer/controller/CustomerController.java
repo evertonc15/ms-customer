@@ -4,13 +4,13 @@ import evertonc15.com.github.ms_customer.constants.CustomerConstants;
 import evertonc15.com.github.ms_customer.dto.CustomerDTO;
 import evertonc15.com.github.ms_customer.dto.ResponseDTO;
 import evertonc15.com.github.ms_customer.service.CustomerService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static evertonc15.com.github.ms_customer.constants.CustomerConstants.CUSTOMER_201_STATUS;
 
@@ -23,7 +23,7 @@ public class CustomerController {
     private final CustomerService customerService;
 
     @PostMapping("/create")
-    public ResponseEntity<ResponseDTO> save(@RequestBody CustomerDTO customerDTO) {
+    public ResponseEntity<ResponseDTO> save(@Valid @RequestBody CustomerDTO customerDTO) {
         customerService.save(customerDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 ResponseDTO.builder()
@@ -31,4 +31,10 @@ public class CustomerController {
                         .statusHttp(CUSTOMER_201_STATUS)
                 .build());
     }
+
+    @GetMapping("/findAll")
+    public Page<CustomerDTO> findAll(Pageable pageable) {
+        return customerService.findAll(pageable);
+    }
+
 }

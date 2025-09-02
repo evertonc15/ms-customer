@@ -6,11 +6,13 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class PetDTO {
 
     @NotBlank(message = "Pet's name cannot be null or empty")
     private String name;
 
     @NotBlank(message = "Pet's specie cannot be null or empty")
-    private String specie;
+    private String species;
 }

@@ -11,5 +11,6 @@ public interface ContactMapper {
 
     Contact dtoToEntity(ContactDTO contactsDTO);
 
+    ContactDTO entityToDto(Contact contact);
 
 }

@@ -4,18 +4,21 @@ import evertonc15.com.github.ms_customer.domain.Customer;
 import evertonc15.com.github.ms_customer.dto.CustomerDTO;
 import evertonc15.com.github.ms_customer.dto.PetDTO;
 import evertonc15.com.github.ms_customer.exception.AlreadyExitsPetToCustomer;
+import evertonc15.com.github.ms_customer.mapper.ContactMapper;
 import evertonc15.com.github.ms_customer.mapper.CustomerMapper;
 import evertonc15.com.github.ms_customer.mapper.PetMapper;
 import evertonc15.com.github.ms_customer.repository.CustomerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static evertonc15.com.github.ms_customer.constants.CustomerConstants.EXIST_PET_TO_CUSTOMER;
+import static evertonc15.com.github.ms_customer.constants.CustomerConstants.*;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +29,7 @@ public class CustomerService {
     private final CustomerMapper customerMapper;
     private final PetService petService;
     private final PetMapper petMapper;
+    private final ContactMapper contactMapper;
 
     public void save(CustomerDTO customerDTO) {
 
@@ -44,8 +48,9 @@ public class CustomerService {
 
         if (verifyPetsOfCustomer(customer, pets)) {
             log.error("m=existsPetsToCustomer, exists pet to customer with cpf = {}", customer.getCpf());
-            throw new AlreadyExitsPetToCustomer(EXIST_PET_TO_CUSTOMER);
+            throw new AlreadyExitsPetToCustomer(CUSTOMER_MESSAGE_PET_EXISTS_400);
         }
+
         customer.getPets().addAll(petMapper.dtoToEntity(pets));
 
     }
@@ -57,6 +62,22 @@ public class CustomerService {
 
         return  petService.existsPetFromCustomer(customer.getId(), petsName);
 
+    }
+
+    public Page<CustomerDTO> findAll(Pageable pageable) {
+
+        var customer = customerRepository.findAll(pageable);
+
+        return customer.map(c ->
+                CustomerDTO.builder()
+                        .name(c.getName())
+                        .cpf(c.getCpf())
+                        .email(c.getEmail())
+                        .active(c.isActive())
+                        .contactDTO(contactMapper.entityToDto(c.getContact()))
+                        .petsDTO(petMapper.entityToDto(c.getPets()))
+                        .build()
+                );
     }
 
 }

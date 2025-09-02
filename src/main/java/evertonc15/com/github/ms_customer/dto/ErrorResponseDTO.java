@@ -15,6 +15,6 @@ public class ErrorResponseDTO {
 
     private String errorMessage;
 
-    private String httpErrorStatus;
+    private Integer httpErrorStatus;
 
 }

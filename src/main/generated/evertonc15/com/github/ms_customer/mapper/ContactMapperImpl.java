@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-08-29T21:35:09-0300",
+    date = "2025-09-01T18:59:32-0300",
     comments = "version: 1.6.3, compiler: javac, environment: Java 17.0.14 (Amazon.com Inc.)"
 )
 @Component
@@ -20,6 +20,9 @@ public class ContactMapperImpl implements ContactMapper {
         }
 
         Contact contact = new Contact();
+
+        contact.setMobileNumber( contactsDTO.getMobileNumber() );
+        contact.setPhone( contactsDTO.getPhone() );
 
         return contact;
     }

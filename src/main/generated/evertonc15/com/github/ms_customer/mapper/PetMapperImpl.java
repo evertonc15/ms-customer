@@ -2,6 +2,7 @@ package evertonc15.com.github.ms_customer.mapper;
 
 import evertonc15.com.github.ms_customer.domain.Pet;
 import evertonc15.com.github.ms_customer.dto.PetDTO;
+import evertonc15.com.github.ms_customer.enums.Species;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import javax.annotation.processing.Generated;
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-08-29T21:35:08-0300",
+    date = "2025-09-01T21:16:55-0300",
     comments = "version: 1.6.3, compiler: javac, environment: Java 17.0.14 (Amazon.com Inc.)"
 )
 @Component
@@ -51,6 +52,9 @@ public class PetMapperImpl implements PetMapper {
         Pet.PetBuilder pet = Pet.builder();
 
         pet.name( petDTO.getName() );
+        if ( petDTO.getSpecies() != null ) {
+            pet.species( Enum.valueOf( Species.class, petDTO.getSpecies() ) );
+        }
 
         return pet.build();
     }
@@ -63,6 +67,9 @@ public class PetMapperImpl implements PetMapper {
         PetDTO.PetDTOBuilder petDTO = PetDTO.builder();
 
         petDTO.name( pet.getName() );
+        if ( pet.getSpecies() != null ) {
+            petDTO.species( pet.getSpecies().name() );
+        }
 
         return petDTO.build();
     }

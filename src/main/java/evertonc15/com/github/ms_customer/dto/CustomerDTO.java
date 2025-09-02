@@ -1,5 +1,6 @@
 package evertonc15.com.github.ms_customer.dto;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -22,11 +23,14 @@ public class CustomerDTO {
     @CPF(message = "CPF invalido")
     private String cpf;
 
-    @Email(message = "Email not valid")
+    @Email(message = "Email invalido")
     private String email;
 
+    @Valid
     private ContactDTO contactDTO;
 
     private Set<PetDTO> petsDTO;
+
+    private boolean active;
 
 }
