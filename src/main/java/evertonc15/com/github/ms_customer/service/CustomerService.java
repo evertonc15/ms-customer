@@ -12,13 +12,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static evertonc15.com.github.ms_customer.constants.CustomerConstants.*;
+import static evertonc15.com.github.ms_customer.constants.CustomerConstants.CUSTOMER_404_MESSAGE;
+import static evertonc15.com.github.ms_customer.constants.CustomerConstants.CUSTOMER_MESSAGE_PET_EXISTS_400;
 
 @Service
 @RequiredArgsConstructor
@@ -78,6 +81,52 @@ public class CustomerService {
                         .petsDTO(petMapper.entityToDto(c.getPets()))
                         .build()
                 );
+    }
+
+    public void updateCustomer(Long id, CustomerDTO customerDTO) {
+
+        var customer = customerRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                CUSTOMER_404_MESSAGE));
+
+        if (customerDTO.getPetsDTO() != null && !customerDTO.getPetsDTO().isEmpty()) {
+            if (verifyPetsOfCustomer(customer, customerDTO.getPetsDTO())) {
+                throw new AlreadyExitsPetToCustomer(CUSTOMER_MESSAGE_PET_EXISTS_400);
+            }
+            customer.setPets(petMapper.dtoToEntity(customerDTO.getPetsDTO()));
+        }
+
+        if (customerDTO.getName() != null) {
+            customer.setName(customerDTO.getName());
+        }
+        if (customerDTO.getCpf() != null) {
+            String novoCpf = customerDTO.getCpf().trim();
+            if (!novoCpf.equals(customer.getCpf())) {
+                boolean cpfExists = customerRepository.existsByCpfAndIdNot(novoCpf, id);
+                if (cpfExists) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                            "Já existe um cliente cadastrado com esse CPF.");
+                }
+                customer.setCpf(novoCpf);
+            }
+        }
+        if (customerDTO.getEmail() != null) {
+            customer.setEmail(customerDTO.getEmail());
+        }
+        if (customerDTO.getContactDTO() != null) {
+            customer.setContact(contactMapper.dtoToEntity(customerDTO.getContactDTO()));
+        }
+
+        customerRepository.save(customer);
+
+    }
+
+    public void changeStatus(Long id, boolean active) {
+        var customer = customerRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, CUSTOMER_404_MESSAGE));
+
+        customer.setActive(active);
+        customerRepository.save(customer);
     }
 
 }

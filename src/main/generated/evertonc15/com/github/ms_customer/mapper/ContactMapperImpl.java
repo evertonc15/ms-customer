@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-09-01T18:59:32-0300",
+    date = "2025-09-01T22:56:10-0300",
     comments = "version: 1.6.3, compiler: javac, environment: Java 17.0.14 (Amazon.com Inc.)"
 )
 @Component
@@ -25,5 +25,19 @@ public class ContactMapperImpl implements ContactMapper {
         contact.setPhone( contactsDTO.getPhone() );
 
         return contact;
+    }
+
+    @Override
+    public ContactDTO entityToDto(Contact contact) {
+        if ( contact == null ) {
+            return null;
+        }
+
+        ContactDTO.ContactDTOBuilder contactDTO = ContactDTO.builder();
+
+        contactDTO.mobileNumber( contact.getMobileNumber() );
+        contactDTO.phone( contact.getPhone() );
+
+        return contactDTO.build();
     }
 }

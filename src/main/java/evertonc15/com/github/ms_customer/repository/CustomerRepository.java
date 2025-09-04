@@ -8,4 +8,7 @@ import java.util.Optional;
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
     Optional<Customer> findByCpf(String cpf);
+    boolean existsByCpf(String cpf);
+    boolean existsByCpfAndIdNot(String cpf, Long id);
+
 }
